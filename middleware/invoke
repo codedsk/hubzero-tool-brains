@@ -1,0 +1,9 @@
+#!/bin/sh
+
+/usr/bin/invoke_app "$@" -t brains \
+    -u wrwroxy-0.1 \
+    -u node-6.11.2 \
+    -w "none" \
+    -c "xview -fullscreen -onroot \${NODE_LOGO_PATH}" \
+    -c "wrwroxy --stream-log --logfile /dev/null" \
+    -C "node @tool/www/app.js"
