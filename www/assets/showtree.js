@@ -9,21 +9,33 @@ $(function() {
 
     tree.jstree({
         "core" : {
+            "multiple" : false,
             "data" : [
-                { "text" : "Root node",
+                { "text" : "Biological Objects",
                   "children" : [
-                      { "text" : "Child node 1" },
-                      { "text" : "Child node 2",
-                        "children" : [
-                            { "text" : "Grandchild node 1" },
-                            { "text" : "Grandchild node 2",
-                              "state" : { "opened" : true, "selected" : true }
-                            },
-                            { "text" : "Grandchild node 3" }
-                        ]
+                      { "text" : "Cats" },
+                      { "text" : "Dogs",
+                        "state" : { "opened" : true, "selected" : true }
                       },
-                      { "text" : "Child node 3" },
-                      { "text" : "Child node 4" }
+                      { "text" : "Humans"},
+                      { "text" : "Ants" }
+                  ]
+                },
+                { "text" : "Non-Biological Objects",
+                  "children" : [
+                      { "text" : "Bricks" },
+                      { "text" : "Metal Beams"},
+                      { "text" : "Signs" },
+                      { "text" : "Statues"}
+                  ]
+                },
+                { "text" : "Background Scenes",
+                  "children" : [
+                      { "text" : "City Scapes" },
+                      { "text" : "Fields"},
+                      { "text" : "Mountains"},
+                      { "text" : "Parks" },
+                      { "text" : "Rivers" }
                   ]
                 }
             ]
