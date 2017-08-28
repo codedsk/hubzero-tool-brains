@@ -1,9 +1,9 @@
-.fill {
+.max-height {
     height: 100%;
     min-height: 100%;
 }
 
 .confine-tree {
-    height: 100px;
+    height: 40vh;
     overflow: auto;
 }

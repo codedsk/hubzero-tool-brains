@@ -8,15 +8,17 @@ $(function() {
     var tree = $('#categories');
 
     tree.jstree({
-        'core' : {
-            'data' : [
+        "core" : {
+            "data" : [
                 { "text" : "Root node",
                   "children" : [
                       { "text" : "Child node 1" },
                       { "text" : "Child node 2",
                         "children" : [
                             { "text" : "Grandchild node 1" },
-                            { "text" : "Grandchild node 2" },
+                            { "text" : "Grandchild node 2",
+                              "state" : { "opened" : true, "selected" : true }
+                            },
                             { "text" : "Grandchild node 3" }
                         ]
                       },
@@ -25,7 +27,12 @@ $(function() {
                   ]
                 }
             ]
-        }
+        },
+        "checkbox" : {
+            "visible" : true,
+            "keep_selected_style" : false
+        },
+        "plugins" : ["checkbox"]
     });
 
     tree.on("changed.jstree", function(e, data) {

@@ -14,7 +14,11 @@ $(function() {
         // Start rendering the scene.
         viewer.render();
 
+        viewer.loadModelFromURL("/assets/models/left.gii", {format : "gifti"});
+        viewer.loadModelFromURL("/assets/models/right.gii", {format : "gifti"});
+//        viewer.loadModelFromURL("/assets/models/structural.nii");
 
+/*
         // Load the dbs model into the scene.
         // This will load 3 surfaces into the viewer:
         //   dbs.json
@@ -52,6 +56,7 @@ $(function() {
         viewer.loadModelFromURL("/assets/models/dbs-vat.json", {
           format: "json"
         });
+*/
 
         viewer.zoom = 1.8;
 
