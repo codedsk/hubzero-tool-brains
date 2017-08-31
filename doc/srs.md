@@ -41,7 +41,7 @@ The application consists of a graphical user interface and an analysis program. 
 
 ### Around the graphical user interface
 
-![Graphical user interface overview](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/gui_overview.svg)
+![Graphical user interface overview](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7dfc5e33/doc/images/gui_overview.svg)
 
 The graphical user interface will be written in HTML, CSS, and JavaScript. The layout is broken into widgets which work together to allow users to view, select, and deselect images from the subcategories to create a request that can be given to the analysis program. After the analysis program completes, the graphical user interface will display the rendered results.
 
@@ -49,17 +49,17 @@ The graphical user interface widgets include:
 
 1. The Subcategory Dropdown widget is a dropdown widget whose options are the subcategories of pre-selected images. When a user selects an option from the dropdown menu, the Input Selection Widget is updated with images from the chosen subcategory. 
 
-![Subcategory Dropdown widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/subcat_dropdown_3.svg)
+![Subcategory Dropdown widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7dfc5e33/doc/images/subcat_dropdown_3.svg)
 
 
 2. The Input Selection widget shows the images in the subcategory chosen in the Subcategory Dropdown widget. Images in this widget are not all loaded immediately becuase each subcategory can hold between 700 and 1000 images. Instead, this widget implements pagination or infinite scroll, where images are loaded upon request. Images can be selected by clicking on the image thumbnail. A selected image is gray'd out and can be unselected by clicking on the image a second time. Selecting an image updates a request object on the server, which is reflected in the Subcategory Request History widget. The widget contains a *Select All* checkbox to aid in selecting or deselecting all images in the subcategory. When the Subcategory Dropdown widget signals this widget to load images, those images that were selected as a part of a previous request will be shown in their selected state (gray'd out).
 
-<span style="display:block;text-align:center">![Input Selection widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/input_selection_widget.svg)</span>
+<span style="display:block;text-align:center">![Input Selection widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7dfc5e33/doc/images/input_selection_widget.svg)</span>
 
 
 3. The Subcategory Request History widget shows the stored requests for each subcategory. Each request consists of a subcategory name and a list of selected images in the subcategory. The widget displays a list of links or button that consist of a subcategory name, the number of images chosen, and a cancel button. When a user selects images from the Image Selection widget, the subcategory and image counts in this widget are updated. Pressing on a link's cancel button will deselect all images for the subcategory in the request. Pressing on the link will set the category in the Subcategory Dropdown widget and load the selected images into the Input Selection widget.
 
-![Subcategory Request History widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/subcat_request_history_widget.svg)
+![Subcategory Request History widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7dfc5e33/doc/images/subcat_request_history_widget.svg)
 
 
 ### Interfacing with the analysis program
@@ -125,7 +125,9 @@ There are 4 common communication scenarios:
 6. JSON output
 7. Results
 
-JSON Input:
+![Wireflow diagram showing how the user would pick a single subcategory and multiple images from the graphical user interface](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7dfc5e33/doc/images/wireflow_single_subcategory_multiple_image.svg)
+
+For this scenario, the graphical user interface will produce the following JSON input:
 ```json
 {
   "input" : {
@@ -139,7 +141,7 @@ JSON Input:
 }
 ```
 
-JSON Output:
+And the analysis program would produce the following JSON output:
 ```json
 {
   "input" : {
@@ -159,15 +161,6 @@ JSON Output:
 }
 ```
 
-[//]: # ###### Single subcategory, multiple image workflow
-[//]: # 1. Pick an image subcategory from the drop down menu
-[//]: # 2. Choose multiple images
-[//]: # 3. Simulate
-[//]: # 4. JSON input
-[//]: # 5. Analysis program
-[//]: # 6. JSON output
-[//]: # 7. Results
-
 ###### Multiple subcategory, multiple image workflow
 1. Pick an image subcategory from the drop down menu
 2. Choose image(s)
@@ -179,6 +172,50 @@ JSON Output:
 6. JSON output
 7. Results
 
+
+JSON Input:
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "subcategory" : "cat",
+        "indices" : [1,2,7,9]
+      },
+      {
+        "subcategory" : "dog",
+        "indices" : [6,8,10]
+      }
+    ]
+  }
+}
+```
+
+JSON Output:
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "subcategory" : "cat",
+        "indices" : [1,2,7,9]
+      },
+      {
+        "subcategory" : "dog",
+        "indices" : [6,8,10]
+      }
+
+    ]
+  },
+  "output" : {
+    "views" : {
+      "flat" : "flattened_view.jpg",
+      "stereo" : "stereo_view.jpg”
+    }
+  }
+}
+```
+
 ###### Whole subcategory
 1. Pick an image subcategory from the drop down menu
 2. Toggle the Select All checkbox
@@ -188,6 +225,41 @@ JSON Output:
 5. Analysis program
 6. JSON output
 7. Results
+
+JSON Input:
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "subcategory" : "cat",
+        "indices" : []
+      }
+    ]
+  }
+}
+```
+
+JSON Output:
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "subcategory" : "cat",
+        "indices" : []
+      }
+    ]
+  },
+  "output" : {
+    "views" : {
+      "flat" : "flattened_view.jpg",
+      "stereo" : "stereo_view.jpg”
+    }
+  }
+}
+```
+
 
 ###### Modify request
 1. Pick an image subcategory from the drop down menu
