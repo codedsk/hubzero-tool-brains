@@ -1,14 +1,15 @@
-# Brain Analysis Tools System and Software Requirements Specification
+# Brain Analysis Tools Requirements Specification
 
-### Introduction
+### Goals
 
-### System
-#### Goals
-1. allow a user to launch the brain analysis tool in their web browser
-2. select a set of input images from a pre-supplied repository of images
-3. initiate an analysis run using chosen input images
-4. visualize results of analysis in the web browser.
-#### Definitions
+Allow a user to launch the brain analysis tool in their web browser and perform the following tasks:
+  * Select a set of input images from a pre-supplied repository of images
+  * Initiate an analysis run using chosen input images.
+  * Visualize results of analysis in the web browser.
+
+
+### Definitions
+
 1. Category
 2. Subcategory
 3. GUI
@@ -17,34 +18,83 @@
 6. Weber Infrastructure
 7. NodeJs
 
-#### Assumptions
+
+### Assumptions
+
 1. Application will be accessible through the web browser
 2. For the initial version of the application, users will only be able to select images from pre-supplied image repository. Users cannot upload their own images.
 3. All computational processing will be served from and performed on diagrid.org
+4. The application will be hosted inside of a diagrid.org tool container.
+5. The web interface will be served from the tool container using the HUB's weber infrastructure and will run in the user's web browser.
+6. External software needed by the graphical user interface and analysis program will be installed in the tool container.
 
-#### Environment
-1. The application will be hosted inside of a diagrid.org tool container.
-2. The web interface will be served from the tool container using the HUB's weber infrastructure and will run in the user's web browser.
-3. External software needed by the graphical user interface and analysis program will be installed in the tool container.
 
-#### Data
-1. Pre-supplied image files will be stored in a directory structure.
-2. Each directory represents a sub-category that holds between 700 and 1000 images. There are 48 sub-categories.
+### Input data
 
-#### Software
-There are two main parts to the application:
-1. Graphical user interface
-2. Analysis Program
+Pre-supplied image files will be stored in a directory structure where each directory represents a sub-category and holds between 700 and 1000 images. There are 48 sub-categories. The images use a numeric file name, starting at 1, which also doubles as the image's ``index``. When filename is combined with the category name, the image an be uniquely identified. The category name and index are used by the analysis program to tie an image to a precalculated brain vector.
 
-This section discusses the software behind the application, how the user interacts with the application and how the user's input choices are turned into results.
-The proposed application will be primarily written using HTML, CSS, JavaScript, and Python. NodeJs will be used to serve the web application. The serverside JavaScript will be repsonsible for manipulating the graphical user interface, retrieving inputs from the user, kicking off the Python based analysis jobs, and capturing and returning the results back to the user via the graphical user interface.
+
+### Software
+
+The application consists of a graphical user interface and an analysis program. The proposed application will be primarily written using HTML, CSS, JavaScript, and Python. NodeJs will be used to serve the web application. The server-side JavaScript will be repsonsible for manipulating the graphical user interface, retrieving inputs from the user, kicking off the Python based analysis jobs, capturing the results, and returning them back to the user via the graphical user interface.
+
+
+### Around the graphical user interface
+
+![Graphical user interface overview](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/gui_overview.svg)
+
+The graphical user interface will be written in HTML, CSS, and JavaScript. The layout is broken into widgets which work together to allow users to view, select, and deselect images from the subcategories to create a request that can be given to the analysis program. After the analysis program completes, the graphical user interface will display the rendered results.
+
+The graphical user interface widgets include:
+
+1. The Subcategory Dropdown widget is a dropdown widget whose options are the subcategories of pre-selected images. When a user selects an option from the dropdown menu, the Input Selection Widget is updated with images from the chosen subcategory. 
+
+![Subcategory Dropdown widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/subcat_dropdown_3.svg)
+
+
+2. The Input Selection widget shows the images in the subcategory chosen in the Subcategory Dropdown widget. Images in this widget are not all loaded immediately becuase each subcategory can hold between 700 and 1000 images. Instead, this widget implements pagination or infinite scroll, where images are loaded upon request. Images can be selected by clicking on the image thumbnail. A selected image is gray'd out and can be unselected by clicking on the image a second time. Selecting an image updates a request object on the server, which is reflected in the Subcategory Request History widget. The widget contains a "Select All" checkbox to aid in selecting or deselecting all images in the subcategory. When the Subcategory Dropdown widget signals this widget to load images, those images that were selected as a part of a previous request will be shown in their selected state (gray'd out).
+
+<span style="display:block;text-align:center">![Input Selection widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/input_selection_widget.svg)</span>
+
+
+3. The Subcategory Request History widget shows the stored requests for each subcategory. Each request consists of a subcategory name and a list of selected images in the subcategory. The widget displays a list of links or button that consist of a subcategory name, the number of images chosen, and a cancel button. When a user selects images from the Image Selection widget, the subcategory and image counts in this widget are updated. Pressing on a link's cancel button will deselect all images for the subcategory in the request. Pressing on the link will set the category in the Subcategory Dropdown widget and load the selected images into the Input Selection widget.
+
+![Subcategory Request History widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/subcat_request_history_widget.svg)
+
+
+### Interfacing with the analysis program
+
+The analysis program will be written in Python and will have an option to use the standard input (stdin) and standard output (stdout) file descriptors for communication. A common JSON data protocol has been created to describe the inputs and outputs of a requested analysis.
+
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "category" : "cat",
+        "indices" : [1,2,7,9]
+      },
+      {
+        "category" : "dog",
+        "indices" : [1,3,7]
+      },
+      {
+        "category" : "rabbit",
+        "indices" : []
+      }
+    ]
+  }
+}
+```
+
+and out be performed  to accept input choices and return output results. Calls Connectome Workbench through a system call.
+
+Analysis program is responsible for retrieving cached analysis results, refered to as a brain vector, for pre-selected images, averaging the brain vectors, and calling Connectome Workbench to render the results.
 
 Let's take a look at the typical workflows of the application.
 
-#### Around the graphical user interface
-Show image of fully populated graphical user interface (inputs and outputs) with arrows and though balloons telling what the different parts of the GUI are and how the user can interact with them.
 
-##### Wireflows: screenies and workflows
+### Wireflows: screenies and workflows
 
 ###### Single category, single image workflow
 1. Pick an image subcategory from the drop down menu
@@ -99,18 +149,6 @@ Show image of fully populated graphical user interface (inputs and outputs) with
 7. Results
 
 
-
-
-##### Graphical User Interface
-Written in HTML, CSS, JavaScript.
-
-###### GUI widgets
-
-##### Analysis Program
-Written in Python. Speaks the JSON data protocol to accept input choices and return output results. Calls Connectome Workbench through a system call.
-
-Analysis program is responsible for retrieving cached analysis results, refered to as a brain vector, for pre-selected images, averaging the brain vectors, and calling Connectome Workbench to render the results.
-
 ### Future Work
 
 1. User uploaded images
@@ -118,3 +156,6 @@ The graphical user interface can be expanded to support user uploaded images by 
 
 2. Using Tags instead of Subcategories
 Perhaps store images and tags as nodes in a graph database. Edges show relationship between images and tags. Users can search using tags in the subcategory dropdown menu. The image selection widget will be populated with images that are connected to the specified tags.  When an image is picked from the image selection widget, a new edge will be created in the database between the image node and the special "selected" node. May also need special "tags" and "images" nodes that point to which nodes are tags and which nodes are images. When the user presses the simulate button, the serverside JavaScript will launch the Python analysis program. The analysis program will connect to the graph database, locate the "selected" node, and traverse the node's edges to find the images selected by the user. The analysis program will perform its analysis and render result images, whose file names will be returned to the serverside JavaScript through the JSON data protocol on stdard output.
+
+3. Larger Input Selection widget
+The current input selection widget is very restrictive in how many images can be viewed at one time. It currently implements an infinite scroll scheme to reduce the amount of image data that needs to be transfered from the server to the client when the application initially loads and when a new subcategory is chosen. A redesigned application should consider making this area larger. Examples of larger image viewing widgets include image search provided by https://flickr.com and https://images.google.com
