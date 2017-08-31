@@ -31,7 +31,7 @@ Allow a user to launch the brain analysis tool in their web browser and perform 
 
 ### Input data
 
-Pre-supplied image files will be stored in a directory structure where each directory represents a sub-category and holds between 700 and 1000 images. There are 48 sub-categories. The images use a numeric file name, starting at 1, which also doubles as the image's ``index``. When filename is combined with the category name, the image an be uniquely identified. The category name and index are used by the analysis program to tie an image to a precalculated brain vector.
+Pre-supplied image files will be stored in a directory structure where each directory represents a sub-category and holds between 700 and 1000 images. There are 48 sub-categories. The images use a numeric file name, starting at 1, which also doubles as the image's *index*. When filename is combined with the category name, the image an be uniquely identified. The category name and index are used by the analysis program to tie an image to a precalculated brain vector.
 
 
 ### Software
@@ -52,7 +52,7 @@ The graphical user interface widgets include:
 ![Subcategory Dropdown widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/subcat_dropdown_3.svg)
 
 
-2. The Input Selection widget shows the images in the subcategory chosen in the Subcategory Dropdown widget. Images in this widget are not all loaded immediately becuase each subcategory can hold between 700 and 1000 images. Instead, this widget implements pagination or infinite scroll, where images are loaded upon request. Images can be selected by clicking on the image thumbnail. A selected image is gray'd out and can be unselected by clicking on the image a second time. Selecting an image updates a request object on the server, which is reflected in the Subcategory Request History widget. The widget contains a "Select All" checkbox to aid in selecting or deselecting all images in the subcategory. When the Subcategory Dropdown widget signals this widget to load images, those images that were selected as a part of a previous request will be shown in their selected state (gray'd out).
+2. The Input Selection widget shows the images in the subcategory chosen in the Subcategory Dropdown widget. Images in this widget are not all loaded immediately becuase each subcategory can hold between 700 and 1000 images. Instead, this widget implements pagination or infinite scroll, where images are loaded upon request. Images can be selected by clicking on the image thumbnail. A selected image is gray'd out and can be unselected by clicking on the image a second time. Selecting an image updates a request object on the server, which is reflected in the Subcategory Request History widget. The widget contains a *Select All* checkbox to aid in selecting or deselecting all images in the subcategory. When the Subcategory Dropdown widget signals this widget to load images, those images that were selected as a part of a previous request will be shown in their selected state (gray'd out).
 
 <span style="display:block;text-align:center">![Input Selection widget](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/master/doc/images/input_selection_widget.svg)</span>
 
@@ -64,39 +64,59 @@ The graphical user interface widgets include:
 
 ### Interfacing with the analysis program
 
-The analysis program will be written in Python and will have an option to use the standard input (stdin) and standard output (stdout) file descriptors for communication. A common JSON data protocol has been created to describe the inputs and outputs of a requested analysis.
+The analysis program will be written in Python and will have an option to use the standard input (stdin) and standard output (stdout) file descriptors for communication. A common JSON wire protocol has been created to describe the inputs and outputs of a requested analysis.
+
+Communication between the graphical user interface and the analysis program is initiated when the user presses the Simulate button, after choosing one or more subcategories and image files to run the analysis on. The graphical user interface will capture the user's choices and create a JSON object that represents the request. This JSON object is then handed off to the analysis program.
+
+The JSON object that is passed from the graphical user interface to the analysis program holds a single key labeled *input*. The value of *input* is another object with a single key labeled *requests*. The value of the *requests* key is a list of objects, each with two keys labeled *subcategory* and *indices*. The *subcategory* key contains a string with the name of the subcategory of images this request object represents. The *indices* key contains a list of image file index numbers that were chosen by the user for the corresponding subcategory. Below is an example request for images from the *cat* subcategory with indices matching 1, 2, 7 and 9.
 
 ```json
 {
   "input" : {
     "requests" : [
       {
-        "category" : "cat",
+        "subcategory" : "cat",
         "indices" : [1,2,7,9]
-      },
-      {
-        "category" : "dog",
-        "indices" : [1,3,7]
-      },
-      {
-        "category" : "rabbit",
-        "indices" : []
       }
     ]
   }
 }
 ```
 
-and out be performed  to accept input choices and return output results. Calls Connectome Workbench through a system call.
+After completing, the analysis program will write its image results to disk in the present working directory as a JPG file and return the names of the output image files in a response string using the JSON wire protocol. The response string will build on the input string, adding an object, labeled *output*, that contains an object labeled *views*, that contains two key labeled *flat* and *stereo*. The *flat* key is a string holding the name of flattened view image. The *stereo* key is a string holding the name of stereo view image. Below is an example response with a *flat* image named flattened_view.jpg and a *stereo* image named stereo_view.jpg.
 
-Analysis program is responsible for retrieving cached analysis results, refered to as a brain vector, for pre-selected images, averaging the brain vectors, and calling Connectome Workbench to render the results.
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "subcategory" : "cat",
+        "indices" : [1,2,7,9]
+      }
+    ]
+  },
+  "output" : {
+    "views" : {
+      "flat" : "flattened_view.jpg",
+      "stereo" : "stereo_view.jpg”
+    }
+  }
+}
+```
 
 Let's take a look at the typical workflows of the application.
 
 
 ### Wireflows: screenies and workflows
 
-###### Single category, single image workflow
+There are 4 common communication scenarios:
+* User selects one subcategory and one or more images
+* User selects multiple subcategories and multiple images
+* User selects a one whole subcategory
+* User modifies request
+
+ 
+###### Single subcategory, single image workflow
 1. Pick an image subcategory from the drop down menu
 2. Choose an image
 3. Simulate
@@ -105,14 +125,48 @@ Let's take a look at the typical workflows of the application.
 6. JSON output
 7. Results
 
-###### Single subcategory, multiple image workflow
-1. Pick an image subcategory from the drop down menu
-2. Choose multiple images
-3. Simulate
-4. JSON input
-5. Analysis program
-6. JSON output
-7. Results
+JSON Input:
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "subcategory" : "cat",
+        "indices" : [2]
+      }
+    ]
+  }
+}
+```
+
+JSON Output:
+```json
+{
+  "input" : {
+    "requests" : [
+      {
+        "subcategory" : "cat",
+        "indices" : [2]
+      }
+    ]
+  },
+  "output" : {
+    "views" : {
+      "flat" : "flattened_view.jpg",
+      "stereo" : "stereo_view.jpg”
+    }
+  }
+}
+```
+
+[//]: # ###### Single subcategory, multiple image workflow
+[//]: # 1. Pick an image subcategory from the drop down menu
+[//]: # 2. Choose multiple images
+[//]: # 3. Simulate
+[//]: # 4. JSON input
+[//]: # 5. Analysis program
+[//]: # 6. JSON output
+[//]: # 7. Results
 
 ###### Multiple subcategory, multiple image workflow
 1. Pick an image subcategory from the drop down menu
