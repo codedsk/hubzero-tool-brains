@@ -117,17 +117,24 @@ There are 4 common communication scenarios:
 
  
 ###### Single subcategory, single image workflow
-1. Pick an image subcategory from the drop down menu
-2. Choose an image
-3. Simulate
-4. JSON input
-5. Analysis program
-6. JSON output
-7. Results
 
 ![Wireflow diagram showing how the user would pick a single subcategory and multiple images from the graphical user interface](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7dfc5e33/doc/images/wireflow_single_subcategory_multiple_image.svg)
 
-For this scenario, the graphical user interface will produce the following JSON input:
+Through the graphical user interface, the user will be able to pick a single image to simulate with by performing the following tasks:
+
+1. Pick an image subcategory from the drop down menu
+2. Choose an image
+3. Press "Simulate"
+
+The NodeJs application will then read the inputs from the graphical user interface and perform the following tasks:
+
+4. JSON input generated
+5. Analysis program executed
+6. JSON output parsed
+7. Results shown in graphical user interface
+
+For this scenario, the graphical user interface will produce the following JSON input for the analysis program:
+
 ```json
 {
   "input" : {
@@ -141,7 +148,8 @@ For this scenario, the graphical user interface will produce the following JSON 
 }
 ```
 
-And the analysis program would produce the following JSON output:
+And the analysis program will produce the following JSON output as a result to be processed by the graphical user interface:
+
 ```json
 {
   "input" : {
@@ -162,18 +170,26 @@ And the analysis program would produce the following JSON output:
 ```
 
 ###### Multiple subcategory, multiple image workflow
+
+![Wireflow showing how to add images from a second subcategory to a request.](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/4d464de3/doc/images/wireflow_multiple_subcategory_multiple_image.svg)
+
+Through the graphical user interface, the user will be able to pick and simulate multiple images from multiple subcategories with by performing the following tasks:
+
 1. Pick an image subcategory from the drop down menu
 2. Choose image(s)
-3. Pick an image subcategory from the drop down menu
+3. Pick another image subcategory from the drop down menu
 4. Choose image(s)
-3. Simulate
-4. JSON input
-5. Analysis program
-6. JSON output
-7. Results
+5. Press "Simulate"
 
+The NodeJs application will then read the inputs from the graphical user interface and perform the following tasks:
 
-JSON Input:
+6. JSON input generated
+7. Analysis program executed
+8. JSON output parsed
+9. Results shown in graphical user interface
+
+For this scenario, the graphical user interface will produce the following JSON input for the analysis program:
+
 ```json
 {
   "input" : {
@@ -183,7 +199,7 @@ JSON Input:
         "indices" : [1,2,7,9]
       },
       {
-        "subcategory" : "dog",
+        "subcategory" : "sky",
         "indices" : [6,8,10]
       }
     ]
@@ -191,7 +207,8 @@ JSON Input:
 }
 ```
 
-JSON Output:
+And the analysis program will produce the following JSON output as a result to be processed by the graphical user interface:
+
 ```json
 {
   "input" : {
@@ -201,7 +218,7 @@ JSON Output:
         "indices" : [1,2,7,9]
       },
       {
-        "subcategory" : "dog",
+        "subcategory" : "sky",
         "indices" : [6,8,10]
       }
 
@@ -217,16 +234,25 @@ JSON Output:
 ```
 
 ###### Whole subcategory
+
+![Wireflow showing how to add all images in a subcategory to a request.](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/4d464de3/doc/images/wireflow_whole_subcategory.svg)
+
+Through the graphical user interface, the user will be able to pick and simulate all images from a subcategory by performing the following tasks:
+
+
 1. Pick an image subcategory from the drop down menu
 2. Toggle the Select All checkbox
-2.5 Optionally repeat for multiple subcategories
-3. Simulate
-4. JSON input
-5. Analysis program
-6. JSON output
-7. Results
+3. Press "Simulate"
 
-JSON Input:
+The NodeJs application will then read the inputs from the graphical user interface and perform the following tasks:
+
+4. JSON input generated
+5. Analysis program executed
+6. JSON output parsed
+7. Results shown in graphical user interface
+
+For this scenario, the graphical user interface will produce the following JSON input for the analysis program:
+
 ```json
 {
   "input" : {
@@ -240,7 +266,8 @@ JSON Input:
 }
 ```
 
-JSON Output:
+And the analysis program will produce the following JSON output as a result to be processed by the graphical user interface:
+
 ```json
 {
   "input" : {
@@ -262,17 +289,21 @@ JSON Output:
 
 
 ###### Modify request
-1. Pick an image subcategory from the drop down menu
-2. Choose image(s)
-3. Pick an image subcategory from the drop down menu
-4. Choose image(s)
-5. Click stored request link for first request
-6. Unchoose image(s)
-3. Simulate
-4. JSON input
-5. Analysis program
-6. JSON output
-7. Results
+
+![Wireflow showing how to modify a request to add or remove images in a subcategory, or remove all images in the subcategory.](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/4d464de3/doc/images/wireflow_modify_request.svg)
+
+Through the graphical user interface, the user will be able to pick and simulate all images from a subcategory by performing the following tasks:
+
+1. Click stored request link for first request
+2. Unchoose image(s)
+
+or
+
+1. Click the ![cancel sign'](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7685172c/doc/images/cancel_sign.svg) for a stored request to unchoose all images in the subcategory.
+
+then 
+
+3. Press "Simulate"
 
 
 ### Future Work
