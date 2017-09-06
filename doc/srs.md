@@ -299,7 +299,7 @@ Through the graphical user interface, the user will be able to pick and simulate
 
 or
 
-1. Click the ![cancel sign'](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/7685172c/doc/images/cancel_sign.svg) for a stored request to unchoose all images in the subcategory.
+1. Click the ![cancel sign'](https://cdn.rawgit.com/codedsk/hubzero-tool-brains/54ab9e44/doc/images/cancel_sign.svg) for a stored request to unchoose all images in the subcategory.
 
 then 
 
