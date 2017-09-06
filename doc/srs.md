@@ -10,13 +10,16 @@ Allow a user to launch the brain analysis tool in their web browser and perform 
 
 ### Definitions
 
-1. Category
-2. Subcategory
-3. GUI
-4. Analysis Program
-5. JSON
-6. Weber Infrastructure
-7. NodeJs
+1. Category - There are three categories of images including biological objects, non-biological objects, and background scenes. These categories do not appear to be needed as inputs to the simulation, as images can be uniquly identified by their subcategory and image index number. Therefore, we will not talk about categories much in this document or in the graphical user interface.
+2. Subcategory - There are 48 subcategories, each with a directory which holds between 700 and 1000 images. Subcategory names include: 
+  * Biological objects - bear, cat, dog, women, flower, fruit, goose, horse, lion, man, monkey, sheep, snake, tiger, turtle, vegetable.
+  * Non-Biological objects - ball, bike, book, bottle, bowl, chair, computer, hat, instrument, knife, microphone, shoes, trafficlight, TV, umbrella, watch.
+  * Background objects - bedroom, boat, bridge, court, grass, house, kitchen, livingroom, market, mountain, restroom, ship, sky, street, sunrise, wave.
+3. GUI - **G**raphical **U**ser **I**nterface.
+4. Analysis Program - A python based program which runs the images through the science model and runs the connectome workbench process to visualize the results as a JPEG file.
+5. JSON - **J**ava**Sc**ript **O**bject **N**otation, used as the language / syntax for transferring data between the server side application and the analysis program.
+6. Weber Infrastructure - protocol which allows applications running in the tool container to send HTML CSS and JavaScript back to the user's web browser.
+7. NodeJs - Serverside JavaScript engine. The graphical user interface will be built using this.
 
 
 ### Assumptions
